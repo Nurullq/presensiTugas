@@ -14,7 +14,31 @@ class StudentController extends Controller
 
     public function store(Request $request)
     {
-        Student::create($request->only('name', 'class'));
+    // Validasi input
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'class' => 'required|string|max:255',
+    ]);
+
+    // Simpan data siswa
+    Student::create($request->only('name', 'class'));
+
+    // Tambahkan pesan berhasil ke sesi
+    session()->flash('success', 'Data siswa berhasil disimpan!');
+
+    // Redirect kembali ke halaman Data Siswa
+    return redirect()->route('students.index');
+    }
+
+    //ini fitur delete
+    public function destroy($id)
+    {
+        // Cari siswa berdasarkan ID dan hapus
+        $student = Student::findOrFail($id);
+        $student->delete();
+
+        session()->flash('success', 'Data siswa berhasil dihapus!');
+
         return redirect()->route('students.index');
     }
 }
